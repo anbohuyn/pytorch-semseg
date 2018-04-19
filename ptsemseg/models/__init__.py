@@ -2,7 +2,6 @@ import torchvision.models as models
 
 from ptsemseg.models.fcn import *
 from ptsemseg.models.segnet import *
-from ptsemseg.models.segnet_l4 import *
 from ptsemseg.models.unet import *
 from ptsemseg.models.pspnet import *
 from ptsemseg.models.linknet import *
@@ -26,7 +25,7 @@ def get_model(name, n_classes):
         vgg16 = models.vgg16(pretrained=True)
         model.init_vgg16_params(vgg16)
 
-    elif name == 'segnet_l4':
+    elif name == 'segnet_flow':
         model = model(n_classes=n_classes,
                       is_unpooling=True)
         vgg16 = models.vgg16(pretrained=True)
@@ -51,7 +50,7 @@ def _get_model_instance(name):
             'fcn16s': fcn16s,
             'unet': unet,
             'segnet': segnet,
-            'segnet_l4': segnet_l4,
+            'segnet_flow': segnet_flow,
             'pspnet': pspnet,
             'linknet': linknet,
             'frrnA': frrn,
