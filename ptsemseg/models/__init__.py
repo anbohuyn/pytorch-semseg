@@ -25,6 +25,12 @@ def get_model(name, n_classes):
         vgg16 = models.vgg16(pretrained=True)
         model.init_vgg16_params(vgg16)
 
+    elif name == 'segnet_l4':
+        model = model(n_classes=n_classes,
+                      is_unpooling=True)
+        vgg16 = models.vgg16(pretrained=True)
+        model.init_vgg16_params(vgg16)
+
     elif name == 'unet':
         model = model(n_classes=n_classes,
                       is_batchnorm=True,
@@ -44,6 +50,7 @@ def _get_model_instance(name):
             'fcn16s': fcn16s,
             'unet': unet,
             'segnet': segnet,
+            'segnet_l4': segnet_l4,
             'pspnet': pspnet,
             'linknet': linknet,
             'frrnA': frrn,
