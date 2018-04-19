@@ -25,13 +25,6 @@ def get_model(name, n_classes):
         vgg16 = models.vgg16(pretrained=True)
         model.init_vgg16_params(vgg16)
 
-    #TODO: Add this
-    elif name == 'segnet_flow':
-        model = model(n_classes=n_classes,
-                      is_unpooling=True)
-        vgg16 = models.vgg16(pretrained=True)
-        model.init_vgg16_params(vgg16)
-
     elif name == 'unet':
         model = model(n_classes=n_classes,
                       is_batchnorm=True,
@@ -51,11 +44,11 @@ def _get_model_instance(name):
             'fcn16s': fcn16s,
             'unet': unet,
             'segnet': segnet,
-            'segnet_flow': segnet_flow,
             'pspnet': pspnet,
             'linknet': linknet,
             'frrnA': frrn,
             'frrnB': frrn,
         }[name]
-    except:
+    except exc:
+        print exc
         print('Model {} not available'.format(name))
