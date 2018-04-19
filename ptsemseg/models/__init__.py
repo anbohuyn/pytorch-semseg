@@ -2,6 +2,7 @@ import torchvision.models as models
 
 from ptsemseg.models.fcn import *
 from ptsemseg.models.segnet import *
+from ptsemseg.models.segnet_l4 import *
 from ptsemseg.models.unet import *
 from ptsemseg.models.pspnet import *
 from ptsemseg.models.linknet import *
