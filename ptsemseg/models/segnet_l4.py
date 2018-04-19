@@ -2,10 +2,10 @@ import torch.nn as nn
 
 from ptsemseg.models.utils import *
 
-class segnet(nn.Module):
+class segnet_l4(nn.Module):
 
     def __init__(self, n_classes=21, in_channels=3, is_unpooling=True):
-        super(segnet, self).__init__()
+        super(segnet_l4, self).__init__()
 
         self.in_channels = in_channels
         self.is_unpooling = is_unpooling
