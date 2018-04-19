@@ -48,6 +48,7 @@ def train(args):
                                      legend=['Loss']))
 
     # Setup Model
+    print('Arguments : {}'.format(args))
     model = get_model(args.arch, n_classes)
     
     model = torch.nn.DataParallel(model, device_ids=range(torch.cuda.device_count()))
