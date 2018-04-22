@@ -49,6 +49,7 @@ class kittiLoader(data.Dataset):
 
        print("Found %d %s images" % (len(self.files[split]), split))
 
+       print("Image Size: {}".format(self.img_size))
 
     def __len__(self):
         """__len__"""
