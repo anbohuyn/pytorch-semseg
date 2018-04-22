@@ -1,36 +1,38 @@
 import torch.nn as nn
+from torch import chunk
 
 from ptsemseg.models.utils import *
 
-class segnet_l4(nn.Module):
+class segnet_flow(nn.Module):
 
     def __init__(self, n_classes=21, in_channels=3, is_unpooling=True):
-        super(segnet_l4, self).__init__()
+        super(segnet_flow, self).__init__()
 
         self.in_channels = in_channels
         self.is_unpooling = is_unpooling
+        self.n_classes = n_classes
 
         self.down1 = segnetDown2(self.in_channels, 64)
         self.down2 = segnetDown2(64, 128)
         self.down3 = segnetDown3(128, 256)
-        self.down4 = segnetDown3(256, 256)  # 256, 512
-        #self.down5 = segnetDown3(512, 512)
+        self.down4 = segnetDown3(256, 512)
+        self.down5 = segnetDown3(512, 512)
 
-        #self.up5 = segnetUp3(512, 512)
-        self.up4 = segnetUp3(256, 256)  # 512, 256
+        self.up5 = segnetUp3(512, 512)
+        self.up4 = segnetUp3(512, 256)
         self.up3 = segnetUp3(256, 128)
         self.up2 = segnetUp2(128, 64)
         self.up1 = segnetUp2(64, n_classes)
 
-    def forward(self, inputs):
+    def forward_segnet(self, inputs):
 
         down1, indices_1, unpool_shape1 = self.down1(inputs)
         down2, indices_2, unpool_shape2 = self.down2(down1)
         down3, indices_3, unpool_shape3 = self.down3(down2)
         down4, indices_4, unpool_shape4 = self.down4(down3)
-        #down5, indices_5, unpool_shape5 = self.down5(down4)
+        down5, indices_5, unpool_shape5 = self.down5(down4)
 
-        #up5 = self.up5(down5, indices_5, unpool_shape5)
+        up5 = self.up5(down5, indices_5, unpool_shape5)
         up4 = self.up4(up5, indices_4, unpool_shape4)
         up3 = self.up3(up4, indices_3, unpool_shape3)
         up2 = self.up2(up3, indices_2, unpool_shape2)
@@ -38,15 +40,35 @@ class segnet_l4(nn.Module):
 
         return up1
 
+    def forward_flow(self, inputs):
+
+        output = nn.Sequential(
+          nn.Linear(self.in_channels, H),
+          nn.ReLU(),
+          nn.Linear(H, self.n_classes),
+        )
+        return output
+
+    def forward(self, inputs):
+
+        chunks = chunk(inputs, chunks=2)
+        x1 = chunks[1]
+        x2 = chunks[2]
+
+        y1 = forward_segnet(x1)
+        y2 = forward_flow(x2)
+        y = torch.cat((y1, y2), 1)    
+        
+        return y
 
     def init_vgg16_params(self, vgg16):
         blocks = [self.down1,
                   self.down2,
                   self.down3,
                   self.down4,
-                 ] # self.down5]
+                  self.down5]
 
-        #ranges = [[0, 4], [5, 9], [10, 16], [17, 23], [24, 29]]
+        ranges = [[0, 4], [5, 9], [10, 16], [17, 23], [24, 29]]
         features = list(vgg16.features.children())
 
         vgg_layers = []
