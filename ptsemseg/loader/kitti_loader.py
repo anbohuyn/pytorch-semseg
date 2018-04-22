@@ -61,7 +61,6 @@ class kittiLoader(data.Dataset):
         """
         img_path = self.files[self.split][index].rstrip()
         lbl_path = os.path.join(self.annotations_base,
-                                img_path.split(os.sep)[-2], 
                                 os.path.basename(img_path))
 
         img = m.imread(img_path)
