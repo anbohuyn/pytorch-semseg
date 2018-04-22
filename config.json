@@ -1,17 +1,16 @@
 {
   "pascal":
   {
-    "data_path": "/home/gpu_users/meetshah/segdata/pascal/VOCdevkit/VOC2012/"
+    "data_path": "/home/anouni/ivc/datasets/pascal/VOCdevkit/VOC2012/"
   },
-
   "sbd":
   {
-    "data_path": "/home/gpu_users/meetshah/segdata/pascal/benchmark_RELEASE/"
+    "data_path": "/home/anouni/ivc/datasets/sbd/benchmark_RELEASE/"
   },
 
   "camvid":
   {
-    "data_path": "/Users/meet/data/CamVid/"
+    "data_path": "/home/anouni/ivc/datasets/CamVid/"
   },
   
   "ade20k":
@@ -41,6 +40,6 @@
   
   "kitti":
   {
-    "data_path": "/home/meet/datasets/kitti/"
+    "data_path": "/home/anouni/ivc/datasets/kitti/"
   }
 }
