@@ -10,7 +10,7 @@ from ptsemseg.augmentations import *
 
 class kittiLoader(data.Dataset):
     def __init__(self, root, split="train", is_transform=False, 
-                img_size=(128, 416), augmentations=None, img_norm=True):
+                img_size=None, augmentations=None, img_norm=True):
        """__init__
         :param root:
         :param split:
@@ -21,7 +21,7 @@ class kittiLoader(data.Dataset):
 
        self.root = root
        self.split = split
-       self.img_size = img_size if isinstance(img_size, tuple) else (img_size, img_size)
+       self.img_size = (128, 416) # img_size if isinstance(img_size, tuple) else (img_size, img_size)
        self.is_transform = is_transform
        self.augmentations = augmentations
        self.img_norm = img_norm
