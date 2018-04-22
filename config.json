@@ -40,6 +40,6 @@
   
   "kitti":
   {
-    "data_path": "/home/meet/datasets/kitti/"
+    "data_path": "/home/anouni/ivc/datasets/kitti/"
   }
 }
