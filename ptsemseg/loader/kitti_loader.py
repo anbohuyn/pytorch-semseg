@@ -11,44 +11,43 @@ from ptsemseg.augmentations import *
 class kittiLoader(data.Dataset):
     def __init__(self, root, split="train", is_transform=False, 
                 img_size=(128, 416), augmentations=None, img_norm=True):
-       
-         """__init__
+       """__init__
         :param root:
         :param split:
         :param is_transform:
         :param img_size:
         :param augmentations 
-        """
+       """
 
-        self.root = root
-        self.split = split
-        self.img_size = img_size if isinstance(img_size, tuple) else (img_size, img_size)
-        self.is_transform = is_transform
-        self.augmentations = augmentations
-        self.img_norm = img_norm
-        self.mean = np.array([104.00699, 116.66877, 122.67892]) #TODO: Calculate
-        self.n_classes = 19 #TODO Find out
-        self.files = {}
+       self.root = root
+       self.split = split
+       self.img_size = img_size if isinstance(img_size, tuple) else (img_size, img_size)
+       self.is_transform = is_transform
+       self.augmentations = augmentations
+       self.img_norm = img_norm
+       self.mean = np.array([104.00699, 116.66877, 122.67892]) #TODO: Calculate
+       self.n_classes = 19 #TODO Find out
+       self.files = {}
 
-        self.images_base = os.path.join(self.root, self.split, 'image_2')
-        self.annotations_base = os.path.join(self.root, self.split, 'semantic')
+       self.images_base = os.path.join(self.root, self.split, 'image_2')
+       self.annotations_base = os.path.join(self.root, self.split, 'semantic')
 
-        self.files[split] = recursive_glob(rootdir=self.images_base, suffix='.png')
+       self.files[split] = recursive_glob(rootdir=self.images_base, suffix='.png')
 
-        self.void_classes = [0, 1, 2, 3, 4, 5, 6, 9, 10, 14, 15, 16, 18, 29, 30, -1]
-        self.valid_classes = [7, 8, 11, 12, 13, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33]
-        self.class_names = ['unlabelled', 'road', 'sidewalk', 'building', 'wall', 'fence',\
+       self.void_classes = [0, 1, 2, 3, 4, 5, 6, 9, 10, 14, 15, 16, 18, 29, 30, -1]
+       self.valid_classes = [7, 8, 11, 12, 13, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33]
+       self.class_names = ['unlabelled', 'road', 'sidewalk', 'building', 'wall', 'fence',\
                             'pole', 'traffic_light', 'traffic_sign', 'vegetation', 'terrain',\
                             'sky', 'person', 'rider', 'car', 'truck', 'bus', 'train', \
                             'motorcycle', 'bicycle']
 
-        self.ignore_index = 250
-        self.class_map = dict(zip(self.valid_classes, range(19))) 
+       self.ignore_index = 250
+       self.class_map = dict(zip(self.valid_classes, range(19))) 
 
-        if not self.files[split]:
-            raise Exception("No files for split=[%s] found in %s" % (split, self.images_base))
+       if not self.files[split]:
+           raise Exception("No files for split=[%s] found in %s" % (split, self.images_base))
 
-        print("Found %d %s images" % (len(self.files[split]), split))
+       print("Found %d %s images" % (len(self.files[split]), split))
 
 
     def __len__(self):
