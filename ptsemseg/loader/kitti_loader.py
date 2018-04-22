@@ -102,6 +102,8 @@ class kittiLoader(data.Dataset):
 
         if not np.all(classes == np.unique(lbl)):
             print("WARN: resizing labels yielded fewer classes")
+	    #print("... classes {}".format(classes))
+	    #print("... uniq lbl {}".format(np.unique(lbl)))
 
         if not np.all(np.unique(lbl[lbl!=self.ignore_index]) < self.n_classes):
             print('after det', classes,  np.unique(lbl))
