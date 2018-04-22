@@ -29,8 +29,8 @@ class kittiLoader(data.Dataset):
        self.n_classes = 19 #TODO Find out
        self.files = {}
 
-       self.images_base = os.path.join(self.root, self.split, 'image_2')
-       self.annotations_base = os.path.join(self.root, self.split, 'semantic')
+       self.images_base = os.path.join(self.root,  'data_semantics', self.split, 'image_2')
+       self.annotations_base = os.path.join(self.root,  'data_semantics', self.split, 'semantic')
 
        self.files[split] = recursive_glob(rootdir=self.images_base, suffix='.png')
 
