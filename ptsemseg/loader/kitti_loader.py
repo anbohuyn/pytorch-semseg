@@ -46,7 +46,7 @@ class kittiLoader(data.Dataset):
 
        self.root = root
        self.split = split
-       self.img_size = (128, 416) # img_size if isinstance(img_size, tuple) else (img_size, img_size)
+       self.img_size = (374, 1238) # img_size if isinstance(img_size, tuple) else (img_size, img_size)
        self.is_transform = is_transform
        self.augmentations = augmentations
        self.img_norm = img_norm
