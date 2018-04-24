@@ -79,7 +79,7 @@ class kittiDualLoader(data.Dataset):
 
        print("Found %d %s images" % (len(self.files[split]), split))
 
-       print("Image Size: {}".format(self.img_size))
+       #print("Image Size: {}".format(self.img_size))
 
     def __len__(self):
         """__len__"""
@@ -125,8 +125,8 @@ class kittiDualLoader(data.Dataset):
         #print (type(img2))
 
 
-        print (np.shape(img))
-        print (np.shape(img2))
+        #print (np.shape(img))
+        #print (np.shape(img2))
         
         if self.augmentations is not None:
             img, img2, lbl = self.augmentations(img, img2, lbl)
