@@ -157,7 +157,9 @@ class kittiDualLoader(data.Dataset):
 
         #Flow
         img2 = m.imresize(img2, (self.img_size[0], self.img_size[1])) # uint8
-        
+        img2 = img2.astype(np.float64)
+        img2 = img2.transpose(2, 0, 1)
+
         #Labels        
         classes = np.unique(lbl)
         lbl = lbl.astype(float)
