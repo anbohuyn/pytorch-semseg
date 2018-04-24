@@ -99,7 +99,8 @@ def train(args):
             flows = Variable(flows.cuda())
             labels = Variable(labels.cuda())
 
-            #print("Train images size : {}".format(images.size()))
+            print("Train images size : {}".format(images.size()))
+            print("Flow images size : {}".format(flow.size()))
 
             optimizer.zero_grad()
             outputs = model(images, flows)
