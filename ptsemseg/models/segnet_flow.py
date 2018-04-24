@@ -50,9 +50,9 @@ class segnet_flow(nn.Module):
         down4, indices_4, unpool_shape4 = self.down4_flow(down3)
         down5, indices_5, unpool_shape5 = self.down5_flow(down4)
     
-        indices = [indices_1, indices_2, indices_3, indices_4, indices_5]
-        unpool_shape = [unpool_shape1, unpool_shape2, unpool_shape3, unpool_shape4, unpool_shape5]
-        return down5, indices, unpool_shape
+        #indices = [indices_1, indices_2, indices_3, indices_4, indices_5]
+        #unpool_shape = [unpool_shape1, unpool_shape2, unpool_shape3, unpool_shape4, unpool_shape5]
+        return down5 #, indices, unpool_shape
 
     def decode_segnet(self, inputs, indices, unpool_shape):
 
