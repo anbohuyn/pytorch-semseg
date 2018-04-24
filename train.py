@@ -96,8 +96,10 @@ def train(args):
         model.train()
         for i, (images, flows, labels) in enumerate(trainloader):
             images = Variable(images.cuda())
-            #print("Train images size : {}".format(images.size()))
+            flows = Variable(flows.cuda())
             labels = Variable(labels.cuda())
+
+            #print("Train images size : {}".format(images.size()))
 
             optimizer.zero_grad()
             outputs = model(images, flows)
