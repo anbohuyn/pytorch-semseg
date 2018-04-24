@@ -68,8 +68,8 @@ class segnet_flow(nn.Module):
         
         return up1
 
-    def forward(self, images, flows):
-        #[images, flows] = inputs
+    def forward(self, inputs):
+        (images, flows) = inputs
 
         images_encoded, images_indices, images_unpool_shape  = encode_segnet(images)
         flow_encoded, flow_indices, flow_unpool_shape = encode_segnet_flow(flows)

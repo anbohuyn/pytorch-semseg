@@ -103,7 +103,7 @@ def train(args):
             print("Flow images size : {}".format(flows.size()))
 
             optimizer.zero_grad()
-            outputs = model(images, flows)
+            outputs = model((images, flows))
 
             loss = loss_fn(input=outputs, target=labels)
 
@@ -126,7 +126,7 @@ def train(args):
             flows_val = Variable(flows_val.cuda(), volatile=True)
             labels_val = Variable(labels_val.cuda(), volatile=True)
 
-            outputs = model(images_val, flows_val)
+            outputs = model((images_val, flows_val))
             pred = outputs.data.max(1)[1].cpu().numpy()
             gt = labels_val.data.cpu().numpy()
             running_metrics.update(gt, pred)
