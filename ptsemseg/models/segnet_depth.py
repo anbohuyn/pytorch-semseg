@@ -18,72 +18,48 @@ class segnet_flow(nn.Module):
         self.down4 = segnetDown3(256, 512)
         self.down5 = segnetDown3(512, 512)
 
-        self.down1_flow = segnetDown2(self.in_channels, 64)
-        self.down2_flow = segnetDown2(64, 128)
-        self.down3_flow = segnetDown3(128, 256)
-        self.down4_flow = segnetDown3(256, 512)
-        self.down5_flow = segnetDown3(512, 512)
-
         self.up5 = segnetUp3(512, 512)
         self.up4 = segnetUp3(512, 256)
         self.up3 = segnetUp3(256, 128)
         self.up2 = segnetUp2(128, 64)
         self.up1 = segnetUp2(64, n_classes)
 
-    def encode_segnet(self, inputs):
+    def forward_segnet(self, inputs):
 
         down1, indices_1, unpool_shape1 = self.down1(inputs)
         down2, indices_2, unpool_shape2 = self.down2(down1)
         down3, indices_3, unpool_shape3 = self.down3(down2)
         down4, indices_4, unpool_shape4 = self.down4(down3)
         down5, indices_5, unpool_shape5 = self.down5(down4)
-    
-        indices = [indices_1, indices_2, indices_3, indices_4, indices_5]
-        unpool_shape = [unpool_shape1, unpool_shape2, unpool_shape3, unpool_shape4, unpool_shape5]
-        return down5, indices, unpool_shape
 
-    def encode_segnet_flow(self, inputs):
-
-        down1, indices_1, unpool_shape1 = self.down1_flow(inputs)
-        down2, indices_2, unpool_shape2 = self.down2_flow(down1)
-        down3, indices_3, unpool_shape3 = self.down3_flow(down2)
-        down4, indices_4, unpool_shape4 = self.down4_flow(down3)
-        down5, indices_5, unpool_shape5 = self.down5_flow(down4)
-    
-        indices = [indices_1, indices_2, indices_3, indices_4, indices_5]
-        unpool_shape = [unpool_shape1, unpool_shape2, unpool_shape3, unpool_shape4, unpool_shape5]
-        return down5, indices, unpool_shape
-
-    def decode_segnet(self, inputs, indices, unpool_shape):
-
-        [indices_1, indices_2, indices_3, indices_4, indices_5] = indices
-        [unpool_shape1, unpool_shape2, unpool_shape3, unpool_shape4, unpool_shape5] = unpool_shape
-
-        down5 = inputs
         up5 = self.up5(down5, indices_5, unpool_shape5)
         up4 = self.up4(up5, indices_4, unpool_shape4)
         up3 = self.up3(up4, indices_3, unpool_shape3)
         up2 = self.up2(up3, indices_2, unpool_shape2)
         up1 = self.up1(up2, indices_1, unpool_shape1)
-        
+
         return up1
 
-    def forward(self, inputs):
-        chunks = chunk(inputs, chunks=2)
-        images_original = chunks[1]
-        images_flow = chunks[2]
+    def forward_flow(self, inputs):
 
-        images_encoded, images_indices, images_unpool_shape  = encode_segnet(x1)
-        flow_encoded, flow_indices, flow_unpool_shape = encode_segnet_flow(x2)
-
-        weight_flow = Variable(torch.rand(1), requires_grad=True)
-        flow_encoded_scaled = flow_encoded * weight_flow.expand_as(flow_encoded)
-
-        inputs_encoded = torch.add(images_encodoed, flow_encoded_scaled) 
-        #inputs_encoded = torch.cat((images_encodoed, flow_encodoed), 1)
-    
-        output = decode_segnet(self, inputs_encoded, images_indices, images_unpool_shape)
+        output = nn.Sequential(
+          nn.Linear(self.in_channels, H),
+          nn.ReLU(),
+          nn.Linear(H, self.n_classes),
+        )
         return output
+
+    def forward(self, inputs):
+
+        chunks = chunk(inputs, chunks=2)
+        x1 = chunks[1]
+        x2 = chunks[2]
+
+        y1 = forward_segnet(x1)
+        y2 = forward_flow(x2)
+        y = torch.cat((y1, y2), 1)    
+        
+        return y
 
     def init_vgg16_params(self, vgg16):
         blocks = [self.down1,

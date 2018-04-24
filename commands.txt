@@ -1,0 +1,42 @@
+_______________
+Train
+_______________
+
+python train.py --arch ${1-segnet} --dataset ${2-camvid} --n_epoch ${3-100} --batch_size ${4-8} --l_rate=${5-1e-5}
+
+python train.py --arch segnet --dataset kitti --n_epoch 1000 --batch_size 8 --l_rate 1e-4
+
+srun --pty --partition=titanx-long --gres=gpu:4 --mem=52GB bash run_model.sh segnet kitti 300 8
+
+srun --pty --partition=titanx-long --gres=gpu:4 --mem=52GB python train.py --arch segnet --dataset kitti --n_epoch 1000 --batch_size 8 --l_rate 1e-4
+
+_______________
+Val
+_______________
+
+
+ srun --pty --partition=titanx-long --gres=gpu:4 --mem=52GB python validate.py --model_path segnet_kitti_best_model.pkl --dataset kitti --split val --batch_size 8
+
+
+_______________
+Test
+_______________
+
+srun --pty --partition=titanx-long --gres=gpu:4 --mem=52GB python test.py --model_path segnet_kitti_best_model.pkl --dataset kitti --img_path ../datasets/kitti/data_semantics/test/image_2/000160_10.png --out_path ./results/segnet_kitti_1000ep/000160_10_segmap.png
+
+
+_______________
+Downloading 
+_______________
+
+
+scp -r anouni@gypsum.cs.umass.edu:/home/anouni/ivc/anbohuyn/pytorch-semseg/results/segnet_kitti_1000ep /exp/home/anouni/
+
+scp -r anouni@roc.cs.umass.edu:/exp/home/anouni/segnet_kitti_1000ep ./results/
+
+_______________
+Uploading
+_______________
+
+scp -r custom_160 anouni@roc.cs.umass.edu:/exp/home/anouni/
+
