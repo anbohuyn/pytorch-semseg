@@ -29,8 +29,7 @@ def train(args):
                        CenterCrop(size=256), 
                        HorizontallyFlip(),
                        RandomSized(size=128),
-                       RandomSized(size=(128,256)),
-                       RandomSized(size=(256,128)), 
+                       RandomSized(size=256), 
                        RandomSizedCrop(size=256),
                     ])
 
