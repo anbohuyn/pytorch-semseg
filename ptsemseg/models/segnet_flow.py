@@ -68,12 +68,11 @@ class segnet_flow(nn.Module):
         
         return up1
 
-    def forward(self, inputs, inputs2):
-        images_original = inputs
-        images_flow = inputs2
+    def forward(self, inputs):
+        [images, flows] = inputs
 
-        images_encoded, images_indices, images_unpool_shape  = encode_segnet(x1)
-        flow_encoded, flow_indices, flow_unpool_shape = encode_segnet_flow(x2)
+        images_encoded, images_indices, images_unpool_shape  = encode_segnet(images)
+        flow_encoded, flow_indices, flow_unpool_shape = encode_segnet_flow(flows)
 
         weight_flow = Variable(torch.rand(1), requires_grad=True)
         flow_encoded_scaled = flow_encoded * weight_flow.expand_as(flow_encoded)
