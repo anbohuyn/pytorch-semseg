@@ -15,10 +15,15 @@ from ptsemseg.models import get_model
 from ptsemseg.loader import get_loader, get_data_path
 from ptsemseg.metrics import runningScore
 from ptsemseg.loss import *
-#from ptsemseg.augmentations import *
-from ptsemseg.augmentations_dual import *
 
 def train(args):
+
+    
+    if '_flow' not in args.arch 
+        from ptsemseg.augmentations import *
+    else:
+        from ptsemseg.augmentations_dual import *
+
 
     # Setup Augmentations
     data_aug= Compose([RandomRotate(10),
@@ -64,6 +69,8 @@ def train(args):
     
     model = torch.nn.DataParallel(model, device_ids=range(torch.cuda.device_count()))
     model.cuda()
+
+    print("Using {} GPUs...".format(range(torch.cuda.device_count())))
     
     # Check if model has custom optimizer / loss
     if hasattr(model.module, 'optimizer'):
