@@ -50,8 +50,8 @@ class kittiLoader(data.Dataset):
        self.is_transform = is_transform
        self.augmentations = augmentations
        self.img_norm = img_norm
-       self.mean = np.array([104.00699, 116.66877, 122.67892]) #TODO: Calculate
-       self.n_classes = 19 #TODO Find out
+       self.mean = np.array([ 100.00517842,  106.47954702,  103.08725176])
+       self.n_classes = 19
        self.files = {}
 
        self.images_base = os.path.join(self.root,  'data_semantics', 'custom', self.split, 'image_2')
