@@ -67,6 +67,9 @@ class RandomHorizontallyFlip(object):
             return img.transpose(Image.FLIP_LEFT_RIGHT), mask.transpose(Image.FLIP_LEFT_RIGHT)
         return img, mask
 
+class HorizontallyFlip(object):
+    def __call__(self, img, mask):
+        return img.transpose(Image.FLIP_LEFT_RIGHT), mask.transpose(Image.FLIP_LEFT_RIGHT)
 
 class FreeScale(object):
     def __init__(self, size):
