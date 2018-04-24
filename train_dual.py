@@ -15,8 +15,8 @@ from ptsemseg.models import get_model
 from ptsemseg.loader import get_loader, get_data_path
 from ptsemseg.metrics import runningScore
 from ptsemseg.loss import *
-#from ptsemseg.augmentations_dual import *
-from ptsemseg.augmentations import *
+from ptsemseg.augmentations_dual import *
+#from ptsemseg.augmentations import *
 
 def train(args):
 
@@ -96,14 +96,16 @@ def train(args):
     best_iou = -100.0 
     for epoch in range(args.n_epoch):
         model.train()
-        for i, (images, labels) in enumerate(trainloader):
+        for i, (images, flows, labels) in enumerate(trainloader):
             images = Variable(images.cuda())
+            flows = Variable(flows.cuda())
             labels = Variable(labels.cuda())
 
             print("Train images size : {}".format(images.size()))
-            
+            print("Flow images size : {}".format(flows.size()))
+
             optimizer.zero_grad()
-            outputs = model(images)
+            outputs = model((images, flows))
 
             loss = loss_fn(input=outputs, target=labels)
 
@@ -121,11 +123,12 @@ def train(args):
                 print("Epoch [%d/%d] Loss: %.4f" % (epoch+1, args.n_epoch, loss.data[0]))
 
         model.eval()
-        for i_val, (images_val, labels_val) in tqdm(enumerate(valloader)):
+        for i_val, (images_val, flows_val, labels_val) in tqdm(enumerate(valloader)):
             images_val = Variable(images_val.cuda(), volatile=True)
+            flows_val = Variable(flows_val.cuda(), volatile=True)
             labels_val = Variable(labels_val.cuda(), volatile=True)
 
-            outputs = model(images_val)
+            outputs = model((images_val, flows_val))
             pred = outputs.data.max(1)[1].cpu().numpy()
             gt = labels_val.data.cpu().numpy()
             running_metrics.update(gt, pred)
