@@ -8,6 +8,7 @@ from ptsemseg.loader.cityscapes_loader import cityscapesLoader
 from ptsemseg.loader.nyuv2_loader import NYUv2Loader
 from ptsemseg.loader.sunrgbd_loader import SUNRGBDLoader
 from ptsemseg.loader.kitti_loader import kittiLoader
+from ptsemseg.loader.kitti_dual_loader import kittiDualLoader
 
 def get_loader(name):
     """get_loader
@@ -23,6 +24,7 @@ def get_loader(name):
         'nyuv2': NYUv2Loader,
         'sunrgbd': SUNRGBDLoader,
         'kitti': kittiLoader,
+        'kitti_dual': kittiDualLoader,
     }[name]
 
 

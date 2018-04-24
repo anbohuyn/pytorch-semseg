@@ -15,7 +15,8 @@ from ptsemseg.models import get_model
 from ptsemseg.loader import get_loader, get_data_path
 from ptsemseg.metrics import runningScore
 from ptsemseg.loss import *
-from ptsemseg.augmentations import *
+#from ptsemseg.augmentations import *
+from ptsemseg.augmentations_dual import *
 
 def train(args):
 
