@@ -56,10 +56,10 @@ class kittiDualLoader(data.Dataset):
        self.files = {}
        self.flow_files = {}
 
-       self.images_base = os.path.join(self.root,  'data_semantics', 'custom', self.split, 'image_2')
-       self.annotations_base = os.path.join(self.root,  'data_semantics', 'custom', self.split, 'semantic')
+       self.images_base = os.path.join(self.root,  'data_semantics', 'custom_160', self.split, 'image_2')
+       self.annotations_base = os.path.join(self.root,  'data_semantics', 'custom_160', self.split, 'semantic')
        #sri
-       self.flow_images_base = os.path.join(self.root,  'data_semantics', 'custom', self.split, 'flow_noc')
+       self.flow_images_base = os.path.join(self.root,  'data_semantics', 'custom_160', self.split, 'flow_noc')
 
        self.files[split] = recursive_glob(rootdir=self.images_base, suffix='.png')
        self.flow_files[split] = recursive_glob(rootdir=self.flow_images_base, suffix='.png')
