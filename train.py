@@ -41,7 +41,7 @@ def train(args):
     v_loader = data_loader(data_path, is_transform=True, split='val', img_size=(args.img_rows, args.img_cols))
 
     n_classes = t_loader.n_classes
-    trainloader = data.DataLoader(t_loader, batch_size=args.batch_size, num_workers=8, shuffle=True)
+    trainloader = data.DataLoader(t_loader, batch_size=args.batch_size, num_workers=8, shuffle=False)
     valloader = data.DataLoader(v_loader, batch_size=args.batch_size, num_workers=8)
 
     # Setup Metrics
@@ -94,13 +94,13 @@ def train(args):
     best_iou = -100.0 
     for epoch in range(args.n_epoch):
         model.train()
-        for i, (images, labels) in enumerate(trainloader):
+        for i, (images, flows, labels) in enumerate(trainloader):
             images = Variable(images.cuda())
             #print("Train images size : {}".format(images.size()))
             labels = Variable(labels.cuda())
 
             optimizer.zero_grad()
-            outputs = model(images)
+            outputs = model(images, flows)
 
             loss = loss_fn(input=outputs, target=labels)
 

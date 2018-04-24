@@ -112,8 +112,8 @@ class kittiDualLoader(data.Dataset):
         F_v = (I[:,:,1]-2^15)/64.0
         #F_valid = min(I[:,:,2],1);
         F_valid = np.clip(I[:,:,2], None, 1)
-        F_u[F_valid==0] = 0
-        F_v[F_valid==0] = 0
+        #F_u[F_valid==0] = 0
+        #F_v[F_valid==0] = 0
         img2[:,:,0] = F_u
         img2[:,:,1] = F_v
         img2[:,:,2] = F_valid
