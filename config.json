@@ -41,5 +41,11 @@
   "kitti":
   {
     "data_path": "/home/anouni/ivc/anbohuyn/datasets/kitti/"
+  },
+
+  
+  "kitti_dual":
+  {
+    "data_path": "/home/anouni/ivc/anbohuyn/datasets/kitti/"
   }
 }
