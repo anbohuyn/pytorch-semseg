@@ -70,7 +70,7 @@ def train(args):
     #else:
     #    optimizer = torch.optim.SGD(model.parameters(), lr=args.l_rate, momentum=0.99, weight_decay=5e-4)
     else:
-        optimizer = torch.optim.Adam(model.parameters(), lr=args.l_rate, momentum=0.99, weight_decay=5e-4)
+        optimizer = torch.optim.Adam(model.parameters(), lr=args.l_rate, weight_decay=5e-4)
 
 
     if hasattr(model.module, 'loss'):
