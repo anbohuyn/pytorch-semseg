@@ -67,8 +67,11 @@ def train(args):
     # Check if model has custom optimizer / loss
     if hasattr(model.module, 'optimizer'):
         optimizer = model.module.optimizer
+    #else:
+    #    optimizer = torch.optim.SGD(model.parameters(), lr=args.l_rate, momentum=0.99, weight_decay=5e-4)
     else:
-        optimizer = torch.optim.SGD(model.parameters(), lr=args.l_rate, momentum=0.99, weight_decay=5e-4)
+        optimizer = torch.optim.Adam(model.parameters(), lr=args.l_rate, momentum=0.99, weight_decay=5e-4)
+
 
     if hasattr(model.module, 'loss'):
         print('Using custom loss')
