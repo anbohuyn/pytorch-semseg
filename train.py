@@ -102,7 +102,7 @@ def train(args):
             #print("Train images size : {}".format(images.size()))
 
             optimizer.zero_grad()
-            outputs = model([images, flows])
+            outputs = model(images, flows)
 
             loss = loss_fn(input=outputs, target=labels)
 
