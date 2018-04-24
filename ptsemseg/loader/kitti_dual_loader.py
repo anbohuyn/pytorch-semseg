@@ -132,14 +132,15 @@ class kittiDualLoader(data.Dataset):
             img, img2, lbl = self.augmentations(img, img2, lbl)
         
         if self.is_transform:
-            img, lbl = self.transform(img, lbl)
+            img, img2, lbl = self.transform(img, img2, lbl)
 
         return img, img2, lbl
 
-    def transform(self, img, lbl):
+    def transform(self, img, img2, lbl):
         """transform
 
         :param img:
+        :param img2:
         :param lbl:
         """
 
@@ -154,6 +155,10 @@ class kittiDualLoader(data.Dataset):
         # NHWC -> NCHW
         img = img.transpose(2, 0, 1)
 
+        #Flow
+        img2 = m.imresize(img2, (self.img_size[0], self.img_size[1])) # uint8
+        
+        #Labels        
         classes = np.unique(lbl)
         lbl = lbl.astype(float)
         lbl = m.imresize(lbl, (self.img_size[0], self.img_size[1]), 'nearest', mode='F')
@@ -169,9 +174,10 @@ class kittiDualLoader(data.Dataset):
             raise ValueError("Segmentation map contained invalid class values")
 
         img = torch.from_numpy(img).float()
+        img2 = torch.from_numpy(img2).float()
         lbl = torch.from_numpy(lbl).long()
 
-        return img, lbl
+        return img, img2, lbl
 
     def decode_segmap(self, temp):
         r = temp.copy()
