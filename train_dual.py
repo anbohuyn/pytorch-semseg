@@ -105,7 +105,10 @@ def train(args):
             print("Flow images size : {}".format(flows.size()))
 
             optimizer.zero_grad()
-            outputs = model((images, flows))
+
+            inputs_combined = torch.cat(images, flows) 
+            print('Combined input shape: {}'.format(inputs_combined.size()) )
+            outputs = model(inputs_combined)
 
             loss = loss_fn(input=outputs, target=labels)
 
@@ -128,7 +131,9 @@ def train(args):
             flows_val = Variable(flows_val.cuda(), volatile=True)
             labels_val = Variable(labels_val.cuda(), volatile=True)
 
-            outputs = model((images_val, flows_val))
+            inputs_combined_val = torch.cat(images_val, flows_val)
+            outputs = model(inputs_combined_val)
+
             pred = outputs.data.max(1)[1].cpu().numpy()
             gt = labels_val.data.cpu().numpy()
             running_metrics.update(gt, pred)
