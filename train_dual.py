@@ -104,7 +104,7 @@ def train(args):
             
             inputs_combined = torch.cat([images, flows]) 
             inputs_combined = Variable(inputs_combined.cuda())
-            print('Combined input shape: {}'.format(inputs_combined.size()) )
+            #print('Combined input shape: {}'.format(inputs_combined.size()) )
 
             labels = Variable(labels.cuda())
             optimizer.zero_grad()
@@ -149,7 +149,7 @@ def train(args):
             state = {'epoch': epoch+1,
                      'model_state': model.state_dict(),
                      'optimizer_state' : optimizer.state_dict(),}
-            torch.save(state, "{}_{}_best_model.pkl".format(args.arch, args.dataset))
+            torch.save(state, "{}_{}_best_flow_model.pkl".format(args.arch, args.dataset))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Hyperparams')
