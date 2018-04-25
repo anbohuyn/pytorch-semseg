@@ -345,23 +345,24 @@ class fcn8s_flow(nn.Module):
         conv1 = self.conv_block1(images) #x)
         conv2 = self.conv_block2(conv1)
         conv3 = self.conv_block3(conv2)
-        conv4 = self.conv_block4(conv3)
-        conv5 = self.conv_block5(conv4)
-
+        
         #Flow
         conv1_flow = self.conv_block1_flow(flow) #x)
         conv2_flow = self.conv_block2_flow(conv1_flow)
         conv3_flow = self.conv_block3_flow(conv2_flow)
-        conv4_flow = self.conv_block4_flow(conv3_flow)
-        conv5_flow = self.conv_block5_flow(conv4_flow)
-
+        
         #Concat
-        inputs_combined = torch.add(conv5, conv5_flow) 
+        weight_flow = Variable(torch.rand(1), requires_grad=True)
+        conv3_flow_scaled = conv3_flow * weight_flow.expand_as(conv3_flow)
+        conv3_combined = torch.add(conv3,conv3_flow_scaled) 
 
         #Regular
+        conv4 = self.conv_block4(conv3_combined)
+        conv5 = self.conv_block5(conv4)
+
         score = self.classifier(inputs_combined)
         score_pool4 = self.score_pool4(conv4)
-        score_pool3 = self.score_pool3(conv3)
+        score_pool3 = self.score_pool3(conv3_combined)
 
         score = F.upsample_bilinear(score, score_pool4.size()[2:])
         score += score_pool4
