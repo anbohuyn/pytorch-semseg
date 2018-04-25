@@ -97,17 +97,18 @@ def train(args):
     for epoch in range(args.n_epoch):
         model.train()
         for i, (images, flows, labels) in enumerate(trainloader):
-            images = Variable(images.cuda())
-            flows = Variable(flows.cuda())
+            #images = Variable(images.cuda())
+            #flows = Variable(flows.cuda())
+            #print("Train images size : {}".format(images.size()))
+            #print("Flow images size : {}".format(flows.size()))
+            
+            inputs_combined = torch.cat([images, flows]) 
+            inputs_combined = Variable(inputs_combined.cuda())
+            #print('Combined input shape: {}'.format(inputs_combined.size()) )
+
             labels = Variable(labels.cuda())
-
-            print("Train images size : {}".format(images.size()))
-            print("Flow images size : {}".format(flows.size()))
-
             optimizer.zero_grad()
-
-            inputs_combined = torch.cat(images, flows) 
-            print('Combined input shape: {}'.format(inputs_combined.size()) )
+            
             outputs = model(inputs_combined)
 
             loss = loss_fn(input=outputs, target=labels)
@@ -131,7 +132,7 @@ def train(args):
             flows_val = Variable(flows_val.cuda(), volatile=True)
             labels_val = Variable(labels_val.cuda(), volatile=True)
 
-            inputs_combined_val = torch.cat(images_val, flows_val)
+            inputs_combined_val = torch.cat([images_val, flows_val])
             outputs = model(inputs_combined_val)
 
             pred = outputs.data.max(1)[1].cpu().numpy()
