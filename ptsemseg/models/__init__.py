@@ -21,7 +21,7 @@ def get_model(name, n_classes):
         vgg16 = models.vgg16(pretrained=True)
         model.init_vgg16_params(vgg16)
     
-     elif name in ['fcn32s_flow', 'fcn16s_flow', 'fcn8s_flow']:
+    elif name in ['fcn32s_flow', 'fcn16s_flow', 'fcn8s_flow']:
         model = model(n_classes=n_classes)
         vgg16 = models.vgg16(pretrained=True)
         model.init_vgg16_params(vgg16)

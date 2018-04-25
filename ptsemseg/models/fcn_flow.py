@@ -2,7 +2,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 # FCN32s
-class fcn32s(nn.Module):
+class fcn32s_flow(nn.Module):
 
     def __init__(self, n_classes=21, learned_billinear=False):
         super(fcn32s, self).__init__()
@@ -111,7 +111,7 @@ class fcn32s(nn.Module):
             l2.weight.data = l1.weight.data[:n_class, :].view(l2.weight.size())
             l2.bias.data = l1.bias.data[:n_class]
 
-class fcn16s(nn.Module):
+class fcn16s_flow(nn.Module):
 
     def __init__(self, n_classes=21, learned_billinear=False):
         super(fcn16s, self).__init__()
