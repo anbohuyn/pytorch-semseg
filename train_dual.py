@@ -112,6 +112,10 @@ def train(args):
             
             outputs = model(inputs_combined)
 
+            print('inputs_combined shape: {}'.format(inputs_combined.size()) )
+            print('outputs shape: {}'.format(outputs.size()) )
+            print('labels shape: {}'.format(labels.size()) )
+
             loss = loss_fn(input=outputs, target=labels)
 
             loss.backward()

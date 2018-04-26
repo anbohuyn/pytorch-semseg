@@ -7,7 +7,7 @@ import torch.nn.functional as F
 class fcn32s_flow(nn.Module):
 
     def __init__(self, n_classes=21, learned_billinear=False):
-        super(fcn32s, self).__init__()
+        super(fcn32s_flow, self).__init__()
         self.learned_billinear = learned_billinear
         self.n_classes = n_classes
 
@@ -116,7 +116,7 @@ class fcn32s_flow(nn.Module):
 class fcn16s_flow(nn.Module):
 
     def __init__(self, n_classes=21, learned_billinear=False):
-        super(fcn16s, self).__init__()
+        super(fcn16s_flow, self).__init__()
         self.learned_billinear = learned_billinear
         self.n_classes = n_classes
 
