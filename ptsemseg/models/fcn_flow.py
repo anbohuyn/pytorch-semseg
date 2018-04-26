@@ -366,7 +366,7 @@ class fcn8s_flow(nn.Module):
         conv4 = self.conv_block4(conv3_combined)
         conv5 = self.conv_block5(conv4)
 
-        score = self.classifier(inputs_combined)
+        score = self.classifier(conv5)
         score_pool4 = self.score_pool4(conv4)
         score_pool3 = self.score_pool3(conv3_combined)
 
