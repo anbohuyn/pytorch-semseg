@@ -362,6 +362,10 @@ class fcn8s_flow(nn.Module):
         if torch.cuda.is_available:
             conv3_combined = conv3_combined.cuda()
 
+        print('conv3 shape: {}'.format(conv3.size()) )
+        print('conv3_flow_scaled shape: {}'.format(conv3_flow_scaled.size()) )
+        print('conv3_combined shape: {}'.format(conv3_combined.size()) )
+
         #Regular
         conv4 = self.conv_block4(conv3_combined)
         conv5 = self.conv_block5(conv4)
