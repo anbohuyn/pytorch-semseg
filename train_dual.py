@@ -104,8 +104,7 @@ def train(args):
             
             inputs_combined = torch.cat([images, flows]) 
             inputs_combined = Variable(inputs_combined.cuda())
-            print("inputs_combined type: {}").format(inputs_combined.type()))
-
+            #print("inputs_combined type: {}".format(inputs_combined.type() ) )
             #print('Combined input shape: {}'.format(inputs_combined.size()) )
 
             labels = Variable(labels.cuda())

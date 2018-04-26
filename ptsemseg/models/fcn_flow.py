@@ -354,8 +354,13 @@ class fcn8s_flow(nn.Module):
         
         #Concat
         weight_flow = Variable(torch.rand(1), requires_grad=True)
+        if torch.cuda.is_available:
+            weight_flow = weight_flow.cuda()
+
         conv3_flow_scaled = conv3_flow * weight_flow.expand_as(conv3_flow)
         conv3_combined = torch.add(conv3,conv3_flow_scaled) 
+        if torch.cuda.is_available:
+            conv3_combined = conv3_combined.cuda()
 
         #Regular
         conv4 = self.conv_block4(conv3_combined)
