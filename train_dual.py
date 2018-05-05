@@ -15,8 +15,8 @@ from ptsemseg.models import get_model
 from ptsemseg.loader import get_loader, get_data_path
 from ptsemseg.metrics import runningScore
 from ptsemseg.loss import *
-#from ptsemseg.augmentations_dual import *
-from ptsemseg.augmentations import *
+from ptsemseg.augmentations_dual import *
+#from ptsemseg.augmentations import *
 
 def train(args):
 
@@ -96,14 +96,25 @@ def train(args):
     best_iou = -100.0 
     for epoch in range(args.n_epoch):
         model.train()
-        for i, (images, labels) in enumerate(trainloader):
-            images = Variable(images.cuda())
-            labels = Variable(labels.cuda())
-
+        for i, (images, flows, labels) in enumerate(trainloader):
+            #images = Variable(images.cuda())
+            #flows = Variable(flows.cuda())
             #print("Train images size : {}".format(images.size()))
+            #print("Flow images size : {}".format(flows.size()))
             
+            inputs_combined = torch.cat([images, flows]) 
+            inputs_combined = Variable(inputs_combined.cuda())
+            #print("inputs_combined type: {}".format(inputs_combined.type() ) )
+            #print('Combined input shape: {}'.format(inputs_combined.size()) )
+
+            labels = Variable(labels.cuda())
             optimizer.zero_grad()
-            outputs = model(images)
+            
+            outputs = model(inputs_combined)
+
+            print('inputs_combined shape: {}'.format(inputs_combined.size()) )
+            print('outputs shape: {}'.format(outputs.size()) )
+            print('labels shape: {}'.format(labels.size()) )
 
             loss = loss_fn(input=outputs, target=labels)
 
@@ -121,11 +132,14 @@ def train(args):
                 print("Epoch [%d/%d] Loss: %.4f" % (epoch+1, args.n_epoch, loss.data[0]))
 
         model.eval()
-        for i_val, (images_val, labels_val) in tqdm(enumerate(valloader)):
+        for i_val, (images_val, flows_val, labels_val) in tqdm(enumerate(valloader)):
             images_val = Variable(images_val.cuda(), volatile=True)
+            flows_val = Variable(flows_val.cuda(), volatile=True)
             labels_val = Variable(labels_val.cuda(), volatile=True)
 
-            outputs = model(images_val)
+            inputs_combined_val = torch.cat([images_val, flows_val])
+            outputs = model(inputs_combined_val)
+
             pred = outputs.data.max(1)[1].cpu().numpy()
             gt = labels_val.data.cpu().numpy()
             running_metrics.update(gt, pred)
@@ -140,7 +154,7 @@ def train(args):
             state = {'epoch': epoch+1,
                      'model_state': model.state_dict(),
                      'optimizer_state' : optimizer.state_dict(),}
-            torch.save(state, "{}_{}_best_model.pkl".format(args.arch, args.dataset))
+            torch.save(state, "{}_{}_best_flow_model.pkl".format(args.arch, args.dataset))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Hyperparams')

@@ -93,24 +93,6 @@ class unetConv2(nn.Module):
         outputs = self.conv2(outputs)
         return outputs
 
-
-class unetUp(nn.Module):
-    def __init__(self, in_size, out_size, is_deconv):
-        super(unetUp, self).__init__()
-        self.conv = unetConv2(in_size, out_size, False)
-        if is_deconv:
-            self.up = nn.ConvTranspose2d(in_size, out_size, kernel_size=2, stride=2)
-        else:
-            self.up = nn.UpsamplingBilinear2d(scale_factor=2)
-
-    def forward(self, inputs1, inputs2):
-        outputs2 = self.up(inputs2)
-        offset = outputs2.size()[2] - inputs1.size()[2]
-        padding = 2 * [offset // 2, offset // 2]
-        outputs1 = F.pad(inputs1, padding)
-        return self.conv(torch.cat([outputs1, outputs2], 1))
-
-
 class segnetDown2(nn.Module):
     def __init__(self, in_size, out_size):
         super(segnetDown2, self).__init__()
@@ -225,70 +207,6 @@ class residualBottleneck(nn.Module):
         out = self.relu(out)
 
         return out
-
-
-class linknetUp(nn.Module):
-    def __init__(self, in_channels, n_filters):
-        super(linknetUp, self).__init__()
-
-        # B, 2C, H, W -> B, C/2, H, W
-        self.convbnrelu1 = conv2DBatchNormRelu(in_channels, n_filters/2, k_size=1, stride=1, padding=1)
-
-        # B, C/2, H, W -> B, C/2, H, W
-        self.deconvbnrelu2 = nn.deconv2DBatchNormRelu(n_filters/2, n_filters/2, k_size=3,  stride=2, padding=0)
-
-        # B, C/2, H, W -> B, C, H, W
-        self.convbnrelu3 = conv2DBatchNormRelu(n_filters/2, n_filters, k_size=1, stride=1, padding=1)
-
-    def forward(self, x):
-        x = self.convbnrelu1(x)
-        x = self.deconvbnrelu2(x)
-        x = self.convbnrelu3(x)
-        return x
-
-
-class FRRU(nn.Module):
-    """
-    Full Resolution Residual Unit for FRRN
-    """
-    def __init__(self, prev_channels, out_channels, scale):
-        super(FRRU, self).__init__()
-        self.scale = scale
-        self.prev_channels = prev_channels
-        self.out_channels = out_channels
-
-        self.conv1 = conv2DBatchNormRelu(prev_channels + 32, out_channels, k_size=3, stride=1, padding=1)
-        self.conv2 = conv2DBatchNormRelu(out_channels, out_channels, k_size=3, stride=1, padding=1)
-        self.conv_res = nn.Conv2d(out_channels, 32, kernel_size=1, stride=1, padding=0)
-
-    def forward(self, y, z):
-        x = torch.cat([y, nn.MaxPool2d(self.scale, self.scale)(z)], dim=1)
-        y_prime = self.conv1(x)
-        y_prime = self.conv2(y_prime)
-
-        x = self.conv_res(y_prime)
-        upsample_size = torch.Size([_s*self.scale for _s in y_prime.shape[-2:]])
-        x = F.upsample(x, size=upsample_size, mode='nearest')
-        z_prime = z + x
-
-        return y_prime, z_prime
-
-
-class RU(nn.Module):
-    """
-    Residual Unit for FRRN
-    """
-    def __init__(self, channels, kernel_size=3, strides=1):
-        super(RU, self).__init__()
-
-        self.conv1 = conv2DBatchNormRelu(channels, channels, k_size=kernel_size, stride=strides, padding=1)
-        self.conv2 = conv2DBatchNorm(channels, channels, k_size=kernel_size, stride=strides, padding=1)
-
-    def forward(self, x):
-        incoming = x
-        x = self.conv1(x)
-        x = self.conv2(x)
-        return x + incoming
 
 
 class residualConvUnit(nn.Module):

@@ -34,17 +34,17 @@ def test_all(args):
         files.extend(filenames)
         break
 
+    i=0
+    n = len(files)
     for f in sorted(files):
         args.img_path = path.join(root, f)
-        filename_noext, ext = path.splitext(f)
+        filename_noext, ext = path.splitext(filename)
         new_filename = '{}_{}{}'.format(filename_noext, 'out' , ext)
         args.out_path = path.join(out, new_filename)
-	
-	if(path.exists(args.out_path)):
-	    continue
-
         test_one(args) 
-
+        i+=1
+        print "Completed {}/{}".format(i,n)        
+        
 def test_one(args):
     # Setup image
     print("Read Input Image from : {}".format(args.img_path))

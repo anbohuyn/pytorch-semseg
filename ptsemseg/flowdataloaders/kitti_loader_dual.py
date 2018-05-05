@@ -8,18 +8,8 @@ from torch.utils import data
 from ptsemseg.utils import recursive_glob
 from ptsemseg.augmentations import *
 
+class kittiLoader(data.Dataset):
 
-class cityscapesLoader(data.Dataset):
-    """cityscapesLoader
-
-    https://www.cityscapes-dataset.com
-
-    Data is derived from CityScapes, and can be downloaded from here:
-    https://www.cityscapes-dataset.com/downloads/
-
-    Many Thanks to @fvisin for the loader repo:
-    https://github.com/fvisin/dataset_loaders/blob/master/dataset_loaders/images/cityscapes.py
-    """
     colors = [#[  0,   0,   0],
               [128,  64, 128],
               [244,  35, 232],
@@ -43,44 +33,53 @@ class cityscapesLoader(data.Dataset):
 
     label_colours = dict(zip(range(19), colors))
 
-    def __init__(self, root, split="train", is_transform=False, 
-                 img_size=(512, 1024), augmentations=None):
-        """__init__
 
+    def __init__(self, root, split="train", is_transform=False, 
+                img_size=None, augmentations=None, img_norm=True):
+       """__init__
         :param root:
         :param split:
         :param is_transform:
         :param img_size:
         :param augmentations 
-        """
-        self.root = root
-        self.split = split
-        self.is_transform = is_transform
-        self.augmentations = augmentations
-        self.n_classes = 19
-        self.img_size = img_size if isinstance(img_size, tuple) else (img_size, img_size)
-        self.mean = np.array([73.15835921, 82.90891754, 72.39239876])
-        self.files = {}
+       """
 
-        self.images_base = os.path.join(self.root, 'leftImg8bit', self.split)
-        self.annotations_base = os.path.join(self.root, 'gtFine_trainvaltest', 'gtFine', self.split)
+       self.root = root
+       self.split = split
+       self.img_size = (374, 1238) # img_size if isinstance(img_size, tuple) else (img_size, img_size)
+       self.is_transform = is_transform
+       self.augmentations = augmentations
+       self.img_norm = img_norm
+       #self.mean = np.array([104.00699, 116.66877, 122.67892]) #TODO: Calculate
+       self.mean = np.array([ 100.00517842,  106.47954702,  103.08725176]) #TODO: Calculate
+       self.n_classes = 19 #TODO Find out
+       self.files = {}
+       self.flow_files = {}
 
-        self.files[split] = recursive_glob(rootdir=self.images_base, suffix='.png')
-    
-        self.void_classes = [0, 1, 2, 3, 4, 5, 6, 9, 10, 14, 15, 16, 18, 29, 30, -1]
-        self.valid_classes = [7, 8, 11, 12, 13, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33]
-        self.class_names = ['unlabelled', 'road', 'sidewalk', 'building', 'wall', 'fence',\
+       self.images_base = os.path.join(self.root,  'data_semantics', 'custom', self.split, 'image_2')
+       self.annotations_base = os.path.join(self.root,  'data_semantics', 'custom', self.split, 'semantic')
+       #sri
+       self.flow_images_base = os.path.join(self.root,  'data_semantics', 'custom', self.split, 'flow_noc')
+
+       self.files[split] = recursive_glob(rootdir=self.images_base, suffix='.png')
+       self.flow_files[split] = recursive_glob(rootdir=self.flow_images_base, suffix='.png')
+
+       self.void_classes = [0, 1, 2, 3, 4, 5, 6, 9, 10, 14, 15, 16, 18, 29, 30, -1]
+       self.valid_classes = [7, 8, 11, 12, 13, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33]
+       self.class_names = ['unlabelled', 'road', 'sidewalk', 'building', 'wall', 'fence',\
                             'pole', 'traffic_light', 'traffic_sign', 'vegetation', 'terrain',\
                             'sky', 'person', 'rider', 'car', 'truck', 'bus', 'train', \
                             'motorcycle', 'bicycle']
 
-        self.ignore_index = 250
-        self.class_map = dict(zip(self.valid_classes, range(19))) 
+       self.ignore_index = 250
+       self.class_map = dict(zip(self.valid_classes, range(19))) 
 
-        if not self.files[split]:
-            raise Exception("No files for split=[%s] found in %s" % (split, self.images_base))
+       if not self.files[split]:
+           raise Exception("No files for split=[%s] found in %s" % (split, self.images_base))
 
-        print("Found %d %s images" % (len(self.files[split]), split))
+       print("Found %d %s images" % (len(self.files[split]), split))
+
+       print("Image Size: {}".format(self.img_size))
 
     def __len__(self):
         """__len__"""
@@ -91,24 +90,51 @@ class cityscapesLoader(data.Dataset):
 
         :param index:
         """
+        #import pdb;pdb.set_trace()
         img_path = self.files[self.split][index].rstrip()
+        flow_img_path = self.flow_files[self.split][index].rstrip()
         lbl_path = os.path.join(self.annotations_base,
-                                img_path.split(os.sep)[-2], 
-                                os.path.basename(img_path)[:-15] + 'gtFine_labelIds.png')
+                                os.path.basename(img_path))
 
         img = m.imread(img_path)
         img = np.array(img, dtype=np.uint8)
 
+        img2 = m.imread(flow_img_path)
+        img2 = np.array(img2, dtype=np.uint8)
+
         lbl = m.imread(lbl_path)
         lbl = self.encode_segmap(np.array(lbl, dtype=np.uint8))
+
+        #print (img2)
+
+        I = img2
+        F_u = (I[:,:,0]-2^15)/64.0
+        F_v = (I[:,:,1]-2^15)/64.0
+        #F_valid = min(I[:,:,2],1);
+        F_valid = np.clip(I[:,:,2], None, 1)
+        F_u[F_valid==0] = 0
+        F_v[F_valid==0] = 0
+        img2[:,:,0] = F_u
+        img2[:,:,1] = F_v
+        img2[:,:,2] = F_valid
+        #img2 = F
+
+        #print (img2)
+
+        #print (type(img))
+        #print (type(img2))
+
+
+        print (np.shape(img))
+        print (np.shape(img2))
         
         if self.augmentations is not None:
-            img, lbl = self.augmentations(img, lbl)
+            img, img2, lbl = self.augmentations(img, img2, lbl)
         
         if self.is_transform:
             img, lbl = self.transform(img, lbl)
 
-        return img, lbl
+        return img, img2, lbl
 
     def transform(self, img, lbl):
         """transform
@@ -116,24 +142,27 @@ class cityscapesLoader(data.Dataset):
         :param img:
         :param lbl:
         """
-        img = img[:, :, ::-1]
+
+        img = m.imresize(img, (self.img_size[0], self.img_size[1])) # uint8 with RGB mode
+        img = img[:, :, ::-1] # RGB -> BGR
         img = img.astype(np.float64)
         img -= self.mean
-        img = m.imresize(img, (self.img_size[0], self.img_size[1]))
-        # Resize scales images from 0 to 255, thus we need
-        # to divide by 255.0
-        img = img.astype(float) / 255.0
-        # NHWC -> NCWH
+        if self.img_norm:
+            # Resize scales images from 0 to 255, thus we need
+            # to divide by 255.0
+            img = img.astype(float) / 255.0
+        # NHWC -> NCHW
         img = img.transpose(2, 0, 1)
-        
+
         classes = np.unique(lbl)
         lbl = lbl.astype(float)
         lbl = m.imresize(lbl, (self.img_size[0], self.img_size[1]), 'nearest', mode='F')
         lbl = lbl.astype(int)
-        
 
         if not np.all(classes == np.unique(lbl)):
             print("WARN: resizing labels yielded fewer classes")
+	    #print("... classes {}".format(classes))
+	    #print("... uniq lbl {}".format(np.unique(lbl)))
 
         if not np.all(np.unique(lbl[lbl!=self.ignore_index]) < self.n_classes):
             print('after det', classes,  np.unique(lbl))
@@ -167,6 +196,7 @@ class cityscapesLoader(data.Dataset):
             mask[mask==_validc] = self.class_map[_validc]
         return mask
 
+
 if __name__ == '__main__':
     import torchvision
     import matplotlib.pyplot as plt
@@ -175,8 +205,8 @@ if __name__ == '__main__':
                              RandomRotate(10),
                              RandomHorizontallyFlip()])
 
-    local_path = '/home/meetshah1995/datasets/cityscapes/'
-    dst = cityscapesLoader(local_path, is_transform=True, augmentations=augmentations)
+    local_path = '/home/abhyudai/UMassAmherst/Spring_2018/690IV/Project/dataset/KITTI_2015'
+    dst = kittiLoader(local_path, is_transform=True, augmentations=augmentations)
     bs = 4
     trainloader = data.DataLoader(dst, batch_size=bs, num_workers=0)
     for i, data in enumerate(trainloader):

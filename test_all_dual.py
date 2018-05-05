@@ -50,7 +50,7 @@ def test_one(args):
     img = misc.imread(args.img_path)
     flow = misc.imread(args.flow_path)
     print("Read Flow Image from : {}".format(args.flow_path))
-    
+
     data_loader = get_loader(args.dataset)
     data_path = get_data_path(args.dataset)
     loader = data_loader(data_path, is_transform=True)
@@ -70,7 +70,6 @@ def test_one(args):
     img = torch.from_numpy(img).float()
 
     #Flow
-    #resized_flow = misc.imresize(flow, (self.img_size[0], self.img_size[1]))
     resized_flow = misc.imresize(flow, (loader.img_size[0], loader.img_size[1]))
     
     flow = flow.astype(np.float64)
