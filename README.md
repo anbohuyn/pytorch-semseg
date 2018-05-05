@@ -21,9 +21,10 @@ Adapted from https://github.com/meetshah1995/pytorch-semseg
 * [PSPNet](https://arxiv.org/abs/1612.01105) - With support for loading pretrained models w/o caffe dependency
 
 
-### DataLoaders implemented
+### Datasets/Dataloaders
 
 * [CamVid](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/)
+* [KITTI](http://www.cvlibs.net/datasets/kitti/eval_semseg.php?benchmark=semantics2015)
 * [Pascal VOC](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/segexamples/index.html)
 
 
