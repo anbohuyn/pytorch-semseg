@@ -4,12 +4,9 @@
 [![pypi](https://img.shields.io/pypi/v/pytorch_semseg.svg)](https://pypi.python.org/pypi/pytorch-semseg/0.1.2)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1185075.svg)](https://doi.org/10.5281/zenodo.1185075)
 
+## Semantic Segmentation [PyTorch] for Autonomous Driving Scenes
 
-
-## Semantic Segmentation Algorithms Implemented in PyTorch
-
-This repository aims at mirroring popular semantic segmentation architectures in PyTorch. 
-
+Adapted from https://github.com/meetshah1995/pytorch-semseg
 
 <p align="center">
 <a href="https://www.youtube.com/watch?v=iXh9aCK3ubs" target="_blank"><img src="https://i.imgur.com/agvJOPF.gif" width="364"/></a>
@@ -19,28 +16,15 @@ This repository aims at mirroring popular semantic segmentation architectures in
 
 ### Networks implemented
 
-* [PSPNet](https://arxiv.org/abs/1612.01105) - With support for loading pretrained models w/o caffe dependency
-* [FRRN](https://arxiv.org/abs/1611.08323) - Model A and B
 * [FCN](https://arxiv.org/abs/1411.4038) - All 1 (FCN32s), 2 (FCN16s) and 3 (FCN8s) stream variants
-* [U-Net](https://arxiv.org/abs/1505.04597) - With optional deconvolution and batchnorm
-* [Link-Net](https://codeac29.github.io/projects/linknet/) - With multiple resnet backends
 * [Segnet](https://arxiv.org/abs/1511.00561) - With Unpooling using Maxpool indices
+* [PSPNet](https://arxiv.org/abs/1612.01105) - With support for loading pretrained models w/o caffe dependency
 
-
-#### Upcoming 
-
-* [E-Net](https://arxiv.org/abs/1606.02147)
-* [RefineNet](https://arxiv.org/abs/1611.06612)
 
 ### DataLoaders implemented
 
 * [CamVid](http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/)
 * [Pascal VOC](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/segexamples/index.html)
-* [ADE20K](http://groups.csail.mit.edu/vision/datasets/ADE20K/)
-* [MIT Scene Parsing Benchmark](http://data.csail.mit.edu/places/ADEchallenge/ADEChallengeData2016.zip)
-* [Cityscapes](https://www.cityscapes-dataset.com/)
-* [NYUDv2](http://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html)
-* [Sun-RGBD](http://rgbd.cs.princeton.edu/)
 
 
 ### Requirements
@@ -55,19 +39,6 @@ This repository aims at mirroring popular semantic segmentation architectures in
     
 `pip install -r requirements.txt`
 
-### Data
-
-* Download data for desired dataset(s) from list of URLs [here](https://meetshah1995.github.io/semantic-segmentation/deep-learning/pytorch/visdom/2017/06/01/semantic-segmentation-over-the-years.html#sec_datasets).
-* Extract the zip / tar and modify the path appropriately in `config.json`
-
-
-### Usage
-
-Launch [visdom](https://github.com/facebookresearch/visdom#launch) by running (in a separate terminal window)
-
-```
-python -m visdom.server
-```
 
 **To train the model :**
 
@@ -118,13 +89,13 @@ python test.py [-h] [--model_path [MODEL_PATH]] [--dataset [DATASET]]
 ```
 
 
-**If you find this code useful in your research, please consider citing:**
+**Reference**
 
 ```
 @article{mshahsemseg,
     Author = {Meet P Shah},
     Title = {Semantic Segmentation Architectures Implemented in PyTorch.},
-    Journal = {https://github.com/meetsahh1995/pytorch-semseg},
+    Journal = {https://github.com/meetshah1995/pytorch-semseg},
     Year = {2017}
 }
 ```
