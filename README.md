@@ -1,18 +1,6 @@
-# pytorch-semseg
-
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/meetshah1995/pytorch-semseg/blob/master/LICENSE)
-[![pypi](https://img.shields.io/pypi/v/pytorch_semseg.svg)](https://pypi.python.org/pypi/pytorch-semseg/0.1.2)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1185075.svg)](https://doi.org/10.5281/zenodo.1185075)
-
-## Semantic Segmentation [PyTorch] for Autonomous Driving Scenes
+## Semantic Segmentation for Autonomous Driving Scenes [PyTorch] 
 
 Adapted from https://github.com/meetshah1995/pytorch-semseg
-
-<p align="center">
-<a href="https://www.youtube.com/watch?v=iXh9aCK3ubs" target="_blank"><img src="https://i.imgur.com/agvJOPF.gif" width="364"/></a>
-<img src="https://meetshah1995.github.io/images/blog/ss/ptsemseg.png" width="49%"/>
-</p>
-
 
 ### Networks implemented
 
